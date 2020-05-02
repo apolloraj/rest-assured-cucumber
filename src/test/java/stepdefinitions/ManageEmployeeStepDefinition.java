@@ -75,9 +75,9 @@ public class ManageEmployeeStepDefinition {
         }
     }
 
-    @When("^the status code is 200$")
-    public void status_code() throws Throwable {
-        json = response.then().statusCode(200);
+    @When("^validate the status code is \"([^\"]*)\"$")
+    public void status_code(String statusCode) throws Throwable {
+        json = response.then().statusCode(Integer.parseInt(statusCode));
     }
 
     @And("^response includes the name \"([^\"]*)\" and value \"([^\"]*)\"$")

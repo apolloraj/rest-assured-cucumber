@@ -1,5 +1,6 @@
 package stepdefinitions;
 
+import cucumber.api.DataTable;
 import cucumber.api.java.After;
 import cucumber.api.java.Before;
 import cucumber.api.java.en.Given;
@@ -17,6 +18,8 @@ import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static io.restassured.RestAssured.given;
 
 import net.minidev.json.JSONObject;
+
+import java.util.List;
 
 public class CreateEmployeeStepDefinition {
     private RequestSpecification request;
@@ -66,10 +69,23 @@ public class CreateEmployeeStepDefinition {
                 .when().post("http://localhost:8091/"+apiName);
     }
 
-    @When("^the POST status code is 200$")
-    public void status_code() throws Throwable {
-        int statusCode = response.getStatusCode();
-        Assert.assertEquals(statusCode, 200);
+    @Then("^generate a list of employee list$")
+    public void a_employee_gets_request(DataTable table) throws Throwable {
+//        List<List<String>> data = table.raw();
+        List<String> expenseList = table.asList(String.class);
+
+        for (String expense : expenseList) {
+            System.out.println(expense);
+        }
+
+    }
+
+    @When("^the POST status code is \"([^\"]*)\"$")
+    public void status_code(String statusCode) throws Throwable {
+        int responseCode = response.getStatusCode();
+        Assert.assertEquals(responseCode, Integer.parseInt(statusCode));
     }
 
 }
+
+

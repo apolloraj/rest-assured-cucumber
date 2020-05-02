@@ -53,10 +53,10 @@ public class LoginEmployeeStepDefinition {
         setupStub(userRequest,apiName,userName,userPassword);
     }
 
-    @Then("^the status code 200 is returned$")
-    public void response_status_code() throws Throwable {
-        int statusCode = response.getStatusCode();
-        Assert.assertEquals(statusCode, 200);
+    @Then("^the status code \"([^\"]*)\" is returned$")
+    public void response_status_code(String statusCode) throws Throwable {
+        int responseCode = response.getStatusCode();
+        Assert.assertEquals(responseCode, Integer.parseInt(statusCode));
     }
 
     @When("^a users makes a \"([^\"]*)\" request with a \"([^\"]*)\" \"([^\"]*)\" \"([^\"]*)\"$")
