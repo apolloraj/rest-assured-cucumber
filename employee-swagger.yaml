@@ -1,0 +1,232 @@
+swagger: "2.0"
+info:
+  description: "This is a sample server Employee server.  You can find out more about     Swagger at [http://swagger.io](http://swagger.io) or on [irc.freenode.net, #swagger](http://swagger.io/irc/).      For this sample, you can use the api key `special-key` to test the authorization     filters."
+  version: "1.0.0"
+  title: "Swagger Employees"
+  termsOfService: "http://swagger.io/terms/"
+  contact:
+    email: "apiteam@swagger.io"
+  license:
+    name: "Apache 2.0"
+    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
+host: "employees.swagger.io"
+basePath: "/v2"
+tags:
+  - name: "employee"
+    description: "Operations about employee"
+    externalDocs:
+      description: "Find out more about our employees"
+      url: "http://swagger.io"
+schemes:
+  - "https"
+  - "http"
+paths:
+  /employee:
+    post:
+      tags:
+        - "employee"
+      summary: "Create employee"
+      description: "This can only be done by the logged in employee."
+      operationId: "createemployee"
+      produces:
+
+        - "application/json"
+      parameters:
+        - in: "body"
+          name: "body"
+          description: "Created employee object"
+          required: true
+          schema:
+            $ref: "#/definitions/employee"
+      responses:
+        default:
+          description: "successful operation"
+  /employee/createWithArray:
+    post:
+      tags:
+        - "employee"
+      summary: "Creates list of employees with given input array"
+      description: ""
+      operationId: "createemployeesWithArrayInput"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "body"
+          name: "body"
+          description: "List of employee object"
+          required: true
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/employee"
+      responses:
+        default:
+          description: "successful operation"
+  /employee/createWithList:
+    post:
+      tags:
+        - "employee"
+      summary: "Creates list of employees with given input array"
+      description: ""
+      operationId: "createemployeesWithListInput"
+      produces:
+
+        - "application/json"
+      parameters:
+        - in: "body"
+          name: "body"
+          description: "List of employee object"
+          required: true
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/employee"
+      responses:
+        default:
+          description: "successful operation"
+  /employee/login:
+    get:
+      tags:
+        - "employee"
+      summary: "Logs employee into the system"
+      description: ""
+      operationId: "loginemployee"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "employeename"
+          in: "query"
+          description: "The employee name for login"
+          required: true
+          type: "string"
+        - name: "password"
+          in: "query"
+          description: "The password for login in clear text"
+          required: true
+          type: "string"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "string"
+          headers:
+            X-Rate-Limit:
+              type: "integer"
+              format: "int32"
+              description: "calls per hour allowed by the employee"
+            X-Expires-After:
+              type: "string"
+              format: "date-time"
+              description: "date in UTC when token expires"
+        400:
+          description: "Invalid employeename/password supplied"
+  /employee/logout:
+    get:
+      tags:
+        - "employee"
+      summary: "Logs out current logged in employee session"
+      description: ""
+      operationId: "logoutemployee"
+      produces:
+        - "application/json"
+      parameters: []
+      responses:
+        default:
+          description: "successful operation"
+  /employee/{employeename}:
+    get:
+      tags:
+        - "employee"
+      summary: "Get employee by employee name"
+      description: ""
+      operationId: "getemployeeByName"
+      produces:
+
+        - "application/json"
+      parameters:
+        - name: "employeename"
+          in: "path"
+          description: "The name that needs to be fetched. Use employee1 for testing. "
+          required: true
+          type: "string"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/employee"
+        400:
+          description: "Invalid employeename supplied"
+        404:
+          description: "employee not found"
+    put:
+      tags:
+        - "employee"
+      summary: "Updated employee"
+      description: "This can only be done by the logged in employee."
+      operationId: "updateemployee"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "employeename"
+          in: "path"
+          description: "name that need to be updated"
+          required: true
+          type: "string"
+        - in: "body"
+          name: "body"
+          description: "Updated employee object"
+          required: true
+          schema:
+            $ref: "#/definitions/employee"
+      responses:
+        400:
+          description: "Invalid employee supplied"
+        404:
+          description: "employee not found"
+    delete:
+      tags:
+        - "employee"
+      summary: "Delete employee"
+      description: "This can only be done by the logged in employee."
+      operationId: "deleteemployee"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "employeename"
+          in: "path"
+          description: "The name that needs to be deleted"
+          required: true
+          type: "string"
+      responses:
+        400:
+          description: "Invalid employeename supplied"
+        404:
+          description: "employee not found"
+definitions:
+  employee:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+        format: "int64"
+      employeename:
+        type: "string"
+      firstName:
+        type: "string"
+      lastName:
+        type: "string"
+      email:
+        type: "string"
+      password:
+        type: "string"
+      phone:
+        type: "string"
+      employeeStatus:
+        type: "integer"
+        format: "int32"
+        description: "employee Status"
+    xml:
+      name: "employee"
+externalDocs:
+  description: "Find out more about Swagger"
+  url: "http://swagger.io"
