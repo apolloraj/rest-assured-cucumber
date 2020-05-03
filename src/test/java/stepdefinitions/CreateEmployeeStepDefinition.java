@@ -3,6 +3,7 @@ package stepdefinitions;
 import cucumber.api.DataTable;
 import cucumber.api.java.After;
 import cucumber.api.java.Before;
+import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
@@ -12,20 +13,25 @@ import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import io.restassured.response.ValidatableResponse;
 import io.restassured.specification.RequestSpecification;
+import net.minidev.json.JSONArray;
 import org.junit.Assert;
+import java.util.Map;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static io.restassured.RestAssured.given;
 
 import net.minidev.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class CreateEmployeeStepDefinition {
+public class CreateEmployeeStepDefinition<Emp> {
     private RequestSpecification request;
     private Response response;
-    public ValidatableResponse json;
     public WireMockServer wireMockServer;
+    public List<JSONObject> list;
+    public JSONArray empArray;
+    private Emp[] array;
 
     @Before
     public CreateEmployeeStepDefinition setup () {
@@ -48,6 +54,7 @@ public class CreateEmployeeStepDefinition {
                         .withHeader("Content-Type", "application/xml")));
     }
 
+
     @Given("^create a stub for a create employee \"([^\"]*)\"$")
     public void create_stub_create_employee(String strApiName) throws Throwable {
         setupStub(strApiName);
@@ -69,15 +76,40 @@ public class CreateEmployeeStepDefinition {
                 .when().post("http://localhost:8091/"+apiName);
     }
 
-    @Then("^generate a list of employee list$")
-    public void a_employee_gets_request(DataTable table) throws Throwable {
-//        List<List<String>> data = table.raw();
-        List<String> expenseList = table.asList(String.class);
-
-        for (String expense : expenseList) {
-            System.out.println(expense);
+    @Then("^generate a list of employee request with list$")
+    public void a_employee_request_list(DataTable table) throws Throwable {
+        JSONObject requestParams;
+        list = new ArrayList<JSONObject>();
+        CreateEmployee employee = new CreateEmployee();
+        for (Map<String, String> data : table.asMaps(String.class, String.class)) {
+            requestParams = employee.getEmployeeRequest(data);
+            list.add(requestParams);
         }
+    }
 
+    @Then("^generate a list of employee request with array$")
+    public <Emp> void a_employee_request_array(DataTable table) throws Throwable {
+        JSONObject requestParams;
+        empArray=new JSONArray();
+        CreateEmployee employee = new CreateEmployee();
+        for (Map<String, String> data : table.asMaps(String.class, String.class)) {
+            requestParams = employee.getEmployeeRequest(data);
+            empArray.add(requestParams);
+        }
+    }
+
+    @And("^send the POST request to \"([^\"]*)\" for Employee list$")
+    public void send_request(String apiName) throws Throwable {
+        request = given().contentType(ContentType.JSON);
+        response = request.body(list)
+                .when().post("http://localhost:8091/"+apiName);
+    }
+
+    @And("^send the POST request to \"([^\"]*)\" for Employee array$")
+    public void send_request_array(String apiName) throws Throwable {
+        request = given().contentType(ContentType.JSON);
+        response = request.body(empArray)
+                .when().post("http://localhost:8091/"+apiName);
     }
 
     @When("^the POST status code is \"([^\"]*)\"$")

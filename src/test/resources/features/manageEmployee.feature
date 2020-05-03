@@ -1,4 +1,4 @@
-Feature: Scenarios on managing the employees with path parameters
+Feature: Test to validate managing the employees with path parameters
 
   @test
   Scenario Outline: User makes a GET call to get the employee details for the given employee name
